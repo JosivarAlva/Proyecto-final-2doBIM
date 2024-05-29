@@ -31,7 +31,7 @@
 #define c3_teclado 8
 
 // Directivas de procesador pantalla LCD
-#define direccion_LCD 0x27 // Usa el escáner I2C para confirmar esta dirección
+#define direccion_LCD 0x27 
 #define filas_LCD 2
 #define columnas_LCD 16
 
@@ -58,8 +58,8 @@ byte pines_filas[filas_teclado] = {f1_teclado, f2_teclado};
 byte pines_columnas[columnas_teclado] = {c1_teclado, c2_teclado, c3_teclado};
 
 // Variables para el uso del servomotor
-const int inicial_pos = 0;         // Posición inicial del servo
-const int final_pos = 180;  // Posición de 180 grados para indicar que se presionó la tecla 5
+const int inicial_pos = 0;   
+const int final_pos = 180; 
 
 // Constructor
 LiquidCrystal_I2C lcd(direccion_LCD, columnas_LCD, filas_LCD);
@@ -81,10 +81,10 @@ void config_HMI(void) {
   lcd.backlight();
   lcd.setCursor(2, 0);
   lcd.print("Josivar Alva");
-  delay(100); // Se aumenta el delay para ver el texto en la LCD
+  delay(100); 
   lcd.setCursor(1, 1);
   lcd.print("Proyecto final");
-  delay(100); // Se aumenta el delay para ver el texto en la LCD
+  delay(100); 
 }
 
 // Función para controlar el display
@@ -101,7 +101,7 @@ void display() {
   }
 }
 
-// Función para el efecto "Autofantástico"
+// Función para el "Autofantástico"
 void Autofantastico(void) {
   for (int i = 0; i < 4; i++) {
     digitalWrite(ledPins[i], HIGH);
