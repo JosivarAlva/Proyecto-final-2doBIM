@@ -183,9 +183,4 @@ void config_outputs(void) {
     pinMode(Segmentos[i], OUTPUT);
   }  
 }
-
-  pinMode(decodificador_A, OUTPUT);
-  pinMode(decodificador_B, OUTPUT);
-  pinMode(decodificador_C, OUTPUT);
-  pinMode(decodificador_D, OUTPUT);
 }
