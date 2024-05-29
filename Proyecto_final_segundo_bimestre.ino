@@ -1,84 +1,78 @@
 /*
    Fundacion Kinal
-   Centro educativo tecnico laboral Kinal
+   Centro educativo técnico laboral Kinal
    Quinto perito
-   Quinto electronica
-   Codigo Tecnico: EB5AV / EB5AV 
-   Curso: Taller de electronica digital y reparacion de computadoras I
+   Quinto electrónica
+   Código Técnico: EB5AV / EB5AV
+   Curso: Taller de electrónica digital y reparación de computadoras I
    Proyecto: Proyecto final
    Dev: Josivar Sebastián Rayjam Alva López
    Fecha: 27 de mayo del año 2024
-   link de la simulacion: 
+   link de la simulación: 
 */
 
-
+#include <Wire.h>
 #include <Servo.h>
 #include <Keypad.h>
 #include <LiquidCrystal_I2C.h>
 
 // Directivas de procesador servomotor
-#define pin_servo 5
+#define pin_servo 11
 
 // Directivas de procesador teclado matricial
-#define filas_teclado 4
-#define columnas_teclado 4
+#define filas_teclado 2
+#define columnas_teclado 3
 
 #define f1_teclado 13
 #define f2_teclado 12
-#define f3_teclado 11
-#define f4_teclado 10
 
-#define c1_teclado 9
-#define c2_teclado 8
-#define c3_teclado 7
-#define c4_teclado 6
+#define c1_teclado 10
+#define c2_teclado 9
+#define c3_teclado 8
 
 // Directivas de procesador pantalla LCD
 #define direccion_LCD 0x27 // Usa el escáner I2C para confirmar esta dirección
 #define filas_LCD 2
 #define columnas_LCD 16
 
-// Directivas de procesador otros componentes
-#define led_rojo A0
-#define led_naranja A1
-#define led_amarillo A2
-#define led_verde A3
+// Definición de pines para los LEDs
+const int ledPins[] = {A3, A2, A1, A0};
+// Definición de pines del display
+#define A 7
+#define B 6
+#define C 5
+#define D 4
+#define E 3
+#define F 2
+#define G 1
 
-#define decodificador_A 4
-#define decodificador_B 3
-#define decodificador_C 2
-#define decodificador_D 1
-
-// Directivas de procesador para encendido y apagado
-#define ON(pin) digitalWrite(pin, HIGH)
-#define OFF(pin) digitalWrite(pin, LOW)
+const int Segmentos[] = {A, B, C, D, E, F, G};
 
 // Variables para el uso del teclado
 char keys[filas_teclado][columnas_teclado] = {
-  {'1', '2', '3', 'A'},
-  {'4', '5', '6', 'B'},
-  {'7', '8', '9', 'C'},
-  {'*', '0', '#', 'D'}
+  {'1', '2', '3'},
+  {'4', '5', '6'},
 };
 
-byte pines_filas[filas_teclado] = {f1_teclado, f2_teclado, f3_teclado, f4_teclado};
-byte pines_columnas[columnas_teclado] = {c1_teclado, c2_teclado, c3_teclado, c4_teclado};
+byte pines_filas[filas_teclado] = {f1_teclado, f2_teclado};
+byte pines_columnas[columnas_teclado] = {c1_teclado, c2_teclado, c3_teclado};
 
 // Variables para el uso del servomotor
-const int inicial_pos = 0;          // Posición inicial del servo
-const int deteccion_tecla5 = 180;    // Posición de 180 grados para indicar que se presionó la tecla 5
+const int inicial_pos = 0;         // Posición inicial del servo
+const int final_pos = 180;  // Posición de 180 grados para indicar que se presionó la tecla 5
 
 // Constructor
 LiquidCrystal_I2C lcd(direccion_LCD, columnas_LCD, filas_LCD);
 Servo Servodeteccion;
-Keypad tecladoCerradura = Keypad(makeKeymap(keys), pines_filas, pines_columnas, filas_teclado, columnas_teclado);
+Keypad tecladoDeteccion = Keypad(makeKeymap(keys), pines_filas, pines_columnas, filas_teclado, columnas_teclado);
 
 // Funciones
 void config_outputs(void);
 void config_HMI(void);
 void display();
+void Autofantastico(void);
 
-// Función para controlar el servomotor y la LCD
+// Función para configurar el HMI
 void config_HMI(void) {
   Servodeteccion.attach(pin_servo);
   Servodeteccion.write(inicial_pos);
@@ -87,23 +81,38 @@ void config_HMI(void) {
   lcd.backlight();
   lcd.setCursor(2, 0);
   lcd.print("Josivar Alva");
-  delay(100);
+  delay(100); // Se aumenta el delay para ver el texto en la LCD
   lcd.setCursor(1, 1);
   lcd.print("Proyecto final");
+  delay(100); // Se aumenta el delay para ver el texto en la LCD
 }
-// función para controlar el display
+
+// Función para controlar el display
 void display() {
-  OFF(decodificador_A);
-  OFF(decodificador_B);
-  ON(decodificador_C);
-  ON(decodificador_D);
-  delay(100);
-  
-  OFF(decodificador_A);
-  OFF(decodificador_B);
-  ON(decodificador_C);
-  OFF(decodificador_D);
-  delay(100);
+  for (int i = 0; i < 7; i++) {
+    digitalWrite(Segmentos[i], HIGH);
+    delay(250);
+    digitalWrite(Segmentos[i], LOW);
+  }
+  for (int i = 7; i >= 0; i--) {
+    digitalWrite(Segmentos[i], HIGH);
+    delay(250);
+    digitalWrite(Segmentos[i], LOW);
+  }
+}
+
+// Función para el efecto "Autofantástico"
+void Autofantastico(void) {
+  for (int i = 0; i < 4; i++) {
+    digitalWrite(ledPins[i], HIGH);
+    delay(250);
+    digitalWrite(ledPins[i], LOW);
+  }
+  for (int i = 4; i >= 0; i--) {
+    digitalWrite(ledPins[i], HIGH);
+    delay(250);
+    digitalWrite(ledPins[i], LOW);
+  }
 }
 
 void setup() {
@@ -112,76 +121,68 @@ void setup() {
 
   config_outputs();
   config_HMI();
-  display();
 }
 
 void loop() {
-  char key = tecladoCerradura.getKey();
+  char key = tecladoDeteccion.getKey();
 
   if (key) {
-    Serial.println(key);
 
     // Acción para la tecla '1'
-     // contador 0-99
+    // Contador 0-99
     if (key == '1') {
-      Serial.println("Se presionó la tecla 1");
+      Serial.println("Se presiono la tecla 1");
+      Serial.println("Contador automático de 0 a 99");
       for (int ascendente = 0; ascendente <= 99; ascendente++) {
         Serial.println(ascendente);
         delay(100);
       }
     }
     // Acción para la tecla '2'
-    // contador 99-0
+    // Contador 99-0
     else if (key == '2') {
-      Serial.println("Se presionó la tecla 2");
+      Serial.println("Se presiono la tecla 2");
+      Serial.println("Contador automático de 99 a 0");
       for (int descenso = 99; descenso >= 0; descenso--) {
         Serial.println(descenso);
         delay(100);
       }
     }
     // Acción para la tecla '3'
-    // suto fantastico
+    // Efecto Autofantástico
     else if (key == '3') {
-      Serial.println("Se presionó la tecla 3");
-
-      ON(led_verde);
-      delay(500);
-      OFF(led_verde);
-      ON(led_amarillo);
-      delay(500);
-      OFF(led_amarillo);
-      ON(led_naranja);
-      delay(500);
-      OFF(led_naranja);
-      ON(led_rojo);
-      delay(500);
-      OFF(led_rojo);
-      delay(500);
+      Serial.println("Se presiono la tecla 3");
+      Serial.println("Animacion del auto fantástico");
+      Autofantastico();
     }
-
     // Acción para la tecla '4'
-    // display innovaciòn
+    // Display innovación
     else if (key == '4') {
-      Serial.println("Se presionó la tecla 4");
-      display();    
+      Serial.println("Se presiono la tecla 4");
+      Serial.println("Animacion por medio del Display");
+      display();
     }
-    
     // Acción para la tecla '5'
-    // movimiento del servomotor
+    // Movimiento del servomotor
     else if (key == '5') {
-      Serial.println("Se presionó la tecla 5");
-      Servodeteccion.write(180);  
-      delay(100);  // Espera 1 segundo
-      Servodeteccion.write(0);  
+      Serial.println("Se presiono la tecla 5");
+      Serial.println("Movimiento de 0 a 180 grados,servomotor");
+      Servodeteccion.write(final_pos);
+      delay(500);  // Espera 0.5 segundos
+      Servodeteccion.write(inicial_pos);
     }
   }
 }
 
 void config_outputs(void) {
-  pinMode(led_rojo, OUTPUT);
-  pinMode(led_naranja, OUTPUT);
-  pinMode(led_amarillo, OUTPUT);
-  pinMode(led_verde, OUTPUT);
+  for (int i = 0; i < 4; i++) {
+    pinMode(ledPins[i], OUTPUT);
+  }
+  
+  for (int i = 0; i < 7; i++) {
+    pinMode(Segmentos[i], OUTPUT);
+  }  
+}
 
   pinMode(decodificador_A, OUTPUT);
   pinMode(decodificador_B, OUTPUT);
