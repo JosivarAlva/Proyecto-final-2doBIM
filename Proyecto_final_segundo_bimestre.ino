@@ -183,4 +183,3 @@ void config_outputs(void) {
     pinMode(Segmentos[i], OUTPUT);
   }  
 }
-}
